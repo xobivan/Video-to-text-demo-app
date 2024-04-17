@@ -28,7 +28,8 @@ File "/home/xobi_van/.local/lib/python3.10/site-packages/transformers/pipelines/
     raise ValueError(f"Pipeline cannot infer suitable model classes from {model}")
 
 
-   ``` для     detection2.py после запуска на стримлите в терминале выдает такую ошибку:Wav2Vec2ForSequenceClassification: ['wav2vec2.encoder.pos_conv_embed.conv.weight_v', 'wav2vec2.encoder.pos_conv_embed.conv.weight_g']
+   ```
+для     detection2.py после запуска на стримлите в терминале выдает такую ошибку:Wav2Vec2ForSequenceClassification: ['wav2vec2.encoder.pos_conv_embed.conv.weight_v', 'wav2vec2.encoder.pos_conv_embed.conv.weight_g']
 - This IS expected if you are initializing Wav2Vec2ForSequenceClassification from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
 - This IS NOT expected if you are initializing Wav2Vec2ForSequenceClassification from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
 Some weights of Wav2Vec2ForSequenceClassification were not initialized from the model checkpoint at dima806/musical_instrument_detection and are newly initialized: ['wav2vec2.encoder.pos_conv_embed.conv.parametrizations.weight.original1', 'wav2vec2.encoder.pos_conv_embed.conv.parametrizations.weight.original0']
