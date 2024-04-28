@@ -26,7 +26,7 @@ choco install ffmpeg
 # on Windows using Scoop (https://scoop.sh/)
 scoop install ffmpeg
 ```
-
+# Run the project
 ```
 streamlit run main.py
 ```
