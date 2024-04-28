@@ -22,7 +22,7 @@ brew install ffmpeg
 
 # on Windows using Chocolatey (https://chocolatey.org/)
 choco install ffmpeg
-(Открывай командную строку с правами админа, иначе не установится и ничего рабоабть не будет)
+(Открывай командную строку с правами админа, иначе не установится и ничего работать не будет)
 
 # on Windows using Scoop (https://scoop.sh/)
 scoop install ffmpeg
