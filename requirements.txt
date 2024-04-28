@@ -1,4 +1,3 @@
-transformers
 streamlit
-pip install git+https://github.com/openai/whisper.git 
-choco install ffmpeg
+moviepy
+git+https://github.com/openai/whisper.git
