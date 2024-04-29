@@ -1,4 +1,4 @@
 #!/bin/bash
 chmod +x setup.sh
 apt-get update
-apt-get install -y ffmpeg
+sudo apt update && sudo apt install ffmpeg
