@@ -1,7 +1,7 @@
+import os
 import streamlit as st
 from moviepy.editor import VideoFileClip
 import whisper
-import os
 
 st.title("Speech Recognition from Video")
 
@@ -11,41 +11,42 @@ if uploaded_file is not None:
 
     video_clip = None
 
-    # Проверяет загружен ли файл
+    # Check if a file is uploaded
     if uploaded_file.name:
 
-        # Создаёт директорию temp если она не создана автоматически
+        # Create a temporary directory if it doesn't exist
         if not os.path.exists("temp"):
             os.makedirs("temp")
 
-        # Сохраняет видео во временной дирекстории
+        # Save the video in the temporary directory
         video_path = os.path.join("temp", uploaded_file.name)
         with open(video_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
-        # Создание обьекта VideoFileClip
+        # Create a VideoFileClip object
         video_clip = VideoFileClip(video_path)
 
     if video_clip is not None:
         st.write("Transcribing...")
 
-        # Извлечение аудио из видео
+        # Extract audio from the video
         audio_clip = video_clip.audio
         audio_file_path = "audio.wav"
         audio_clip.write_audiofile(audio_file_path, codec="pcm_s16le")
 
-        # Запуск модели
+        # Load the model
         model = whisper.load_model("base")
         result = model.transcribe(audio_file_path, fp16=False)
 
         st.success("Transcription complete:")
         st.write(result["text"])
 
-        # Удаление аудиофайла
+        # Delete the audio file and video file
         os.remove(audio_file_path)
         video_clip.close()
         os.remove(video_path)
     else:
         st.error("Error: No file uploaded")
 
-        #TODO Добавить модель - суммаризатор текста ( например эту https://huggingface.co/d0rj/rut5-base-summ ). Добавить её в приложение на стримлит. Кто то знает можно ли на стримлите накатить стили ? 
+        # TODO: Add a text summarization model (for example, this one: https://huggingface.co/d0rj/rut5-base-summ).
+        #  Integrate it into the Streamlit app. Is it possible to apply st
