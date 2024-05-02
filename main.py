@@ -36,49 +36,76 @@ def generate_detailed_summary(text):
 
 st.title("Speech Recognition from Video")
 
-
 uploaded_file = st.file_uploader("Upload a video", type=["mp4"])
 
-if uploaded_file is not None:
-    st.video(uploaded_file)
+def save_video(uploaded_file) -> str:
 
+    if uploaded_file is not None:
+        st.video(uploaded_file)
+
+        # Проверяет загружен ли файл
+        if uploaded_file.name:
+
+            # Создаёт директорию temp если она не создана автоматически
+            if not os.path.exists("temp"):
+                os.makedirs("temp")
+
+            # Сохраняет видео во временной дирекстории
+            video_path = os.path.join("temp", uploaded_file.name)
+            with open(video_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            return video_path
+        else:
+            st.error("Error: No file uploaded")
+        
+def extract_audio(video_path):
     video_clip = None
 
-    # Проверяет загружен ли файл
-    if uploaded_file.name:
-
-        # Создаёт директорию temp если она не создана автоматически
-        if not os.path.exists("temp"):
-            os.makedirs("temp")
-
-        # Сохраняет видео во временной дирекстории
-        video_path = os.path.join("temp", uploaded_file.name)
-        with open(video_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-
-        # Создание обьекта VideoFileClip
-        video_clip = VideoFileClip(video_path)
+    # Создание обьекта VideoFileClip
+    video_clip = VideoFileClip(video_path)
 
     if video_clip is not None:
-        st.write("Transcribing...")
 
         # Извлечение аудио из видео
         audio_clip = video_clip.audio
         audio_file_path = "audio.wav"
         audio_clip.write_audiofile(audio_file_path, codec="pcm_s16le")
 
-        # Запуск модели
-        model = whisper.load_model("base")
-        result = model.transcribe(audio_file_path, fp16=False)
-        summaries = generate_detailed_summary(result["text"])
-        st.success("Transcription and summarisation complete:")
-        st.write(summaries)
+        return audio_file_path, video_clip
 
-        # Удаление аудиофайла
-        os.remove(audio_file_path)
-        video_clip.close()
-        os.remove(video_path)
-    else:
-        st.error("Error: No file uploaded")
+def transcribe_audio(audio_file_path) -> str:
+        
+    # Запуск модели
+    model = whisper.load_model("base")
+    result = model.transcribe(audio_file_path, fp16=False)
+    return result
 
-        #TODO Добавить модель - суммаризатор текста ( например эту https://huggingface.co/d0rj/rut5-base-summ ). Добавить её в приложение на стримлит. Кто то знает можно ли на стримлите накатить стили ? 
+def summarise_text(text) -> str:
+
+    summarise = generate_detailed_summary(text["text"])
+    st.write(summarise)
+
+def rm_temp_files(audio_file_path, video_clip, video_path):
+        
+    # Удаление аудиофайла
+    os.remove(audio_file_path)
+    video_clip.close()
+    os.remove(video_path)
+
+def main():
+    if uploaded_file:
+        video_path = save_video(uploaded_file)
+        if video_path:
+            st.write("Extracting audio...")
+            audio_file_path, video_clip = extract_audio(video_path)
+            if audio_file_path:
+                st.write("Transcribing...")
+                text = transcribe_audio(audio_file_path)
+                if text:
+                    st.write("Summarising...")
+                    summarise_text(text)
+                    rm_temp_files(audio_file_path, video_clip, video_path)
+                    st.success("Your video was transcibed and summarised")
+
+if __name__ == "__main__":
+    main()
