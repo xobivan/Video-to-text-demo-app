@@ -15,8 +15,8 @@ def generate_detailed_summary(text):
     inputs = tokenizer(text, return_tensors="pt", max_length=1024, truncation=True)
     
     # Set the generation parameters
-    max_length = 1000  # Increase the maximum length of the summary
-    num_beams = 10    # Number of beams for decoding
+    max_length = 500  # Increase the maximum length of the summary
+    num_beams = 5    # Number of beams for decoding
     top_k = 50        # Top-k sampling parameter
     top_p = 0.95      # Top-p sampling parameter
 
