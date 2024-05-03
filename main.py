@@ -54,7 +54,7 @@ def transcribe_audio(audio_file_path):
 
 def main():
 
-    if uploaded_file.name:
+    if uploaded_file:
 
         # Создаёт директорию temp если она не создана автоматически
         if not os.path.exists("temp"):
