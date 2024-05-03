@@ -36,7 +36,6 @@ def extract_audio(video_path):
     audio_file_path = "audio.wav"
     audio_clip.write_audiofile(audio_file_path, codec="pcm_s16le")
     video_clip.close()
-    rm_temp_files(video_path)
     return audio_file_path
 
 def rm_temp_files(file):
@@ -46,7 +45,6 @@ def rm_temp_files(file):
 def transcribe_audio(audio_file_path):
     model = whisper.load_model("base")
     result = model.transcribe(audio_file_path, fp16=False)
-    rm_temp_files(audio_file_path)
     return result['text']
 
 def main():
@@ -61,10 +59,12 @@ def main():
         st.video(uploaded_file)
         st.write("Extracting audio...")
         audio_file_path = extract_audio(video_path)
+        rm_temp_files(video_path)
         st.empty()
 
         st.write("Transcribing...")
         text = transcribe_audio(audio_file_path)
+        rm_temp_files(audio_file_path)
         # st.write(text)
         st.empty()
 
