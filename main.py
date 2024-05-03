@@ -40,6 +40,7 @@ def extract_audio(video_path):
     audio_clip = video_clip.audio
     audio_file_path = "audio.wav"
     audio_clip.write_audiofile(audio_file_path, codec="pcm_s16le")
+    video_clip.close()
     return audio_file_path
 
 def rm_temp_files(file):
@@ -67,14 +68,14 @@ def main():
         st.video(uploaded_file)
         st.write("Extracting audio...")
         audio_file_path = extract_audio(video_path)
-        st.empty()
-
+        rm_temp_files(video_path)
         st.write("Transcribing...")
         text = transcribe_audio(audio_file_path)
+        rm_temp_files(audio_file_path)
         # st.write(text)
-        st.empty()
 
         model, tokenizer = load_model()
+        st.write("Summarising...")
         summary = generate_summary(model, tokenizer, text)
         st.write("Summary:", summary)
 
