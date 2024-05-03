@@ -1,4 +1,9 @@
-# Project setup
+# Персональный помощник для студентов
+![Logotype]([./docs/credit-data-quality-campaign.png](https://github.com/xobivan/Video-to-text-demo-app/assets/153428984/084fd1bb-1a1d-496e-b0b8-a06e18301c50))
+
+
+
+# Иструкция по запуску приложения 
 
 ```
 pip install -r requirements.txt
