@@ -33,6 +33,7 @@ def generate_summary(model, tokenizer, text):
     summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
     return summary
 
+
 @st.cache_data
 def extract_audio(video_path):
     video_clip = VideoFileClip(video_path)
@@ -52,7 +53,13 @@ def transcribe_audio(audio_file_path):
 
 def main():
 
-    if uploaded_file:
+    if uploaded_file.name:
+
+        # Создаёт директорию temp если она не создана автоматически
+        if not os.path.exists("temp"):
+            os.makedirs("temp")
+
+        # Сохраняет видео во временной дирекстории
         video_path = os.path.join("temp", uploaded_file.name)
         with open(video_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
