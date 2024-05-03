@@ -4,6 +4,10 @@ from transformers import BartForConditionalGeneration, BartTokenizer
 import whisper
 import os
 
+st.title("Speech Recognition from Video")
+uploaded_file = st.file_uploader("Upload a video", type=["mp4"])
+    
+
 @st.cache_resource
 def load_model():
     model_name = "facebook/bart-large-cnn"
@@ -50,9 +54,7 @@ def transcribe_audio(audio_file_path):
     return result['text']
 
 def main():
-    st.title("Speech Recognition from Video")
-    uploaded_file = st.file_uploader("Upload a video", type=["mp4"])
-    
+
     if uploaded_file:
         video_path = os.path.join("temp", uploaded_file.name)
         with open(video_path, "wb") as f:
