@@ -20,9 +20,10 @@
 # Иструкция по запуску приложения 
 
 > [!NOTE]
-> Приложение доступно для запуска в облаке Streamlit Cloud:
-> [![Team 24th app](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://video-to-text-demo-app.streamlit.app/)
- 
+> Приложение доступно для запуска в облаке Streamlit Cloud: [Open app](https://video-to-text-demo-app.streamlit.app/ "video-to-text-demo-app")
+
+
+
 ### Для локального запуска необходимо установить:
 
 ```
@@ -66,6 +67,7 @@ streamlit run /main.py
 3. Дождаться загрузки видео на платформу:
 ![Загрузка файла](https://github.com/xobivan/Video-to-text-demo-app/assets/153428984/b6248afe-856c-4918-b443-971aa90d1ca7)
 4. В поле ниже автоматически сформируется транскрибация из загруженого видео.
+
 
 # Команда проекта:
 
