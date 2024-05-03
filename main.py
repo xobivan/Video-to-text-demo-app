@@ -35,7 +35,6 @@ def extract_audio(video_path):
     audio_clip = video_clip.audio
     audio_file_path = "audio.wav"
     audio_clip.write_audiofile(audio_file_path, codec="pcm_s16le")
-    video_clip.close()
     return audio_file_path
 
 def rm_temp_files(file):
