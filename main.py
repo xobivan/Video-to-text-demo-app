@@ -59,12 +59,10 @@ def main():
         st.video(uploaded_file)
         st.write("Extracting audio...")
         audio_file_path = extract_audio(video_path)
-        rm_temp_files(video_path)
         st.empty()
 
         st.write("Transcribing...")
         text = transcribe_audio(audio_file_path)
-        rm_temp_files(audio_file_path)
         # st.write(text)
         st.empty()
 
