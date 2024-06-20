@@ -6,38 +6,18 @@ import os
 
 st.title("Speech Recognition from Video")
 uploaded_file = st.file_uploader("Upload a video", type=["mp4"])
-    
-
-# @st.cache_resource
-# def load_model():
-#     model_name = "facebook/bart-large-cnn"
-#     tokenizer = BartTokenizer.from_pretrained(model_name)
-#     model = BartForConditionalGeneration.from_pretrained(model_name)
-#     return model, tokenizer
-
-# def generate_summary(model, tokenizer, text):
-#     inputs = tokenizer(text, return_tensors="pt", max_length=1024, truncation=True)
-#     max_length = 2000  
-#     num_beams = 20    
-#     top_k = 50        
-#     top_p = 0.95      
-#     summary_ids = model.generate(
-#         inputs.input_ids,
-#         max_length=max_length,
-#         num_beams=num_beams,
-#         top_k=top_k,
-#         top_p=top_p,
-#         early_stopping=True,
-#         num_return_sequences=1  
-#     )
-#     summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
-#     return summary
 
 @st.cache_resource
 def load_whisper_model():
     model = whisper.load_model("base")
     return model
 
+@st.cache_resource
+def load_bart_model():
+    model_name = "facebook/bart-large-cnn"
+    tokenizer = BartTokenizer.from_pretrained(model_name)
+    model = BartForConditionalGeneration.from_pretrained(model_name)
+    return model, tokenizer
 
 @st.cache_data
 def extract_audio(video_path):
@@ -55,9 +35,28 @@ def transcribe_audio(audio_file_path, model):
     result = model.transcribe(audio_file_path, fp16=False)
     return result['text']
 
-def main():
+def detect_language(text):
+    if all(ord(char) < 128 for char in text):
+        return "en"
+    else:
+        return "ru"
+    
+def generate_summary(model, tokenizer, text, max_length=200, min_length=30):
+    inputs = tokenizer(text, return_tensors="pt", max_length=1024, truncation=True)
+    summary_ids = model.generate(
+        inputs.input_ids,
+        max_length=max_length,
+        min_length=min_length,
+        num_beams=4,
+        early_stopping=True,
+    )
+    summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+    return summary
 
-    model = load_whisper_model()
+def main():
+    whisper_model = load_whisper_model()
+    bart_model, bart_tokenizer = load_bart_model()
+
     if uploaded_file:
 
         # Создаёт директорию temp если она не создана автоматически
@@ -74,14 +73,16 @@ def main():
         audio_file_path = extract_audio(video_path)
         rm_temp_files(video_path)
         st.write("Transcribing...")
-        text = transcribe_audio(audio_file_path, model)
+        text = transcribe_audio(audio_file_path, whisper_model)
         rm_temp_files(audio_file_path)
         st.write(text)
 
-        # model, tokenizer = load_model()
-        # st.write("Summarising...")
-        # summary = generate_summary(model, tokenizer, text)
-        # st.write("Summary:", summary)
+        if detect_language(text) == "ru":
+            st.write("Warning: The summary model is optimized for English text")
+        else:
+            st.write("Summarising...")
+            summary = generate_summary(bart_model, bart_tokenizer, text)
+            st.write("Summary:", summary)
 
 if __name__ == "__main__":
     main()
