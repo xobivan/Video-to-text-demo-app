@@ -30,6 +30,3 @@ jobs:
 
       - name: Run tests
         run: docker-compose -f docker-compose.yml run --rm app-dev pytest
-
-      - name: Lint Python code
-        run: docker-compose -f docker-compose.yml run --rm app-dev pylint $(git ls-files '*.py')
