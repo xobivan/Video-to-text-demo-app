@@ -1,5 +1,6 @@
 streamlit
 moviepy
 transformers
-git+https://github.com/openai/whisper.git
 torch
+sentencepiece
+git+https://github.com/openai/whisper.git
