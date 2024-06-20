@@ -1,0 +1,11 @@
+FROM mcr.microsoft.com/devcontainers/python:1-3.11-bullseye
+
+COPY requirements.txt /tmp/pip-tmp/
+RUN pip install --no-cache-dir -r /tmp/pip-tmp/requirements.txt \
+    && rm -rf /tmp/pip-tmp
+
+WORKDIR /workspace
+
+COPY . /workspace
+
+CMD ["streamlit", "run", "main.py", "--server.enableCORS", "false", "--server.enableXsrfProtection", "false"]
