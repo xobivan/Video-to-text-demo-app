@@ -43,7 +43,7 @@ def detect_language(text):
 def generate_summary(model, tokenizer, text, max_length=200, min_length=30):
     inputs = tokenizer("summarize: " + text, return_tensors="pt", max_length=1024, truncation=True)
     summary_ids = model.generate(
-        inputs.input_ids,
+        inputs["input_ids"],
         max_length=max_length,
         min_length=min_length,
         num_beams=4,
