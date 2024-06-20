@@ -1,6 +1,6 @@
 import streamlit as st
 from moviepy.editor import VideoFileClip
-from transformers import BartForConditionalGeneration, BartTokenizer
+from transformers import T5ForConditionalGeneration, T5Tokenizer
 import whisper
 import os
 
@@ -13,10 +13,10 @@ def load_whisper_model():
     return model
 
 @st.cache_resource
-def load_bart_model():
-    model_name = "facebook/bart-large-cnn"
-    tokenizer = BartTokenizer.from_pretrained(model_name)
-    model = BartForConditionalGeneration.from_pretrained(model_name)
+def load_t5_model():
+    model_name = "t5-small"
+    tokenizer = T5Tokenizer.from_pretrained(model_name)
+    model = T5ForConditionalGeneration.from_pretrained(model_name)
     return model, tokenizer
 
 @st.cache_data
@@ -40,9 +40,9 @@ def detect_language(text):
         return "en"
     else:
         return "ru"
-    
+
 def generate_summary(model, tokenizer, text, max_length=200, min_length=30):
-    inputs = tokenizer(text, return_tensors="pt", max_length=1024, truncation=True)
+    inputs = tokenizer("summarize: " + text, return_tensors="pt", max_length=1024, truncation=True)
     summary_ids = model.generate(
         inputs.input_ids,
         max_length=max_length,
@@ -55,7 +55,7 @@ def generate_summary(model, tokenizer, text, max_length=200, min_length=30):
 
 def main():
     whisper_model = load_whisper_model()
-    bart_model, bart_tokenizer = load_bart_model()
+    t5_model, t5_tokenizer = load_t5_model()
 
     if uploaded_file:
 
@@ -63,7 +63,7 @@ def main():
         if not os.path.exists("temp"):
             os.makedirs("temp")
 
-        # Сохраняет видео во временной дирекстории
+        # Сохраняет видео во временной директории
         video_path = os.path.join("temp", uploaded_file.name)
         with open(video_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
@@ -78,11 +78,11 @@ def main():
         st.write(text)
 
         if detect_language(text) == "ru":
-            st.write("Warning: The summary model is optimized for English text")
-        else:
-            st.write("Summarising...")
-            summary = generate_summary(bart_model, bart_tokenizer, text)
-            st.write("Summary:", summary)
+            st.write("Warning: The summary model is optimized for English text!")
+        
+        st.write("Summarising...")
+        summary = generate_summary(t5_model, t5_tokenizer, text)
+        st.write("Summary:", summary)
 
 if __name__ == "__main__":
     main()
