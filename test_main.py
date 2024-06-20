@@ -1,7 +1,8 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from transformers import T5Tokenizer, T5ForConditionalGeneration
+import os
 from main import load_whisper_model, load_t5_model, extract_audio, transcribe_audio, detect_language, generate_summary, rm_temp_files
+from transformers import T5Tokenizer, T5ForConditionalGeneration
 
 @patch('main.whisper.load_model')
 def test_load_whisper_model(mock_load_model):
@@ -59,7 +60,7 @@ def test_generate_summary(mock_model, mock_tokenizer):
     mock_model_instance = mock_model.return_value
     mock_tokenizer_instance = mock_tokenizer.return_value
 
-    mock_tokenizer_instance.return_tensors = MagicMock(return_value={"input_ids": "mock_input_ids"})
+    mock_tokenizer_instance.return_value = {"input_ids": "mock_input_ids"}
     mock_model_instance.generate.return_value = ["summary_id"]
     mock_tokenizer_instance.decode.return_value = "summary"
 
@@ -70,5 +71,5 @@ def test_generate_summary(mock_model, mock_tokenizer):
     assert summary == "summary"
     mock_tokenizer_instance.decode.assert_called_once_with("summary_id", skip_special_tokens=True)
     mock_model_instance.generate.assert_called_once_with(
-        mock_tokenizer_instance.return_tensors.return_value["input_ids"], max_length=200, min_length=30, num_beams=4, early_stopping=True
+        mock_tokenizer_instance.return_value["input_ids"], max_length=200, min_length=30, num_beams=4, early_stopping=True
     )
