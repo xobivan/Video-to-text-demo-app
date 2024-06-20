@@ -19,7 +19,6 @@ def load_t5_model():
     model = T5ForConditionalGeneration.from_pretrained(model_name)
     return model, tokenizer
 
-@st.cache_data
 def extract_audio(video_path):
     video_clip = VideoFileClip(video_path)
     audio_clip = video_clip.audio
