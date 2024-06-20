@@ -33,6 +33,11 @@ uploaded_file = st.file_uploader("Upload a video", type=["mp4"])
 #     summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
 #     return summary
 
+@st.cache_resource
+def load_whisper_model():
+    model = whisper.load_model("base")
+    return model
+
 
 @st.cache_data
 def extract_audio(video_path):
@@ -46,14 +51,13 @@ def extract_audio(video_path):
 def rm_temp_files(file):
     os.remove(file)
 
-@st.cache_resource
-def transcribe_audio(audio_file_path):
-    model = whisper.load_model("base")
+def transcribe_audio(audio_file_path, model):
     result = model.transcribe(audio_file_path, fp16=False)
     return result['text']
 
 def main():
 
+    model = load_whisper_model()
     if uploaded_file:
 
         # Создаёт директорию temp если она не создана автоматически
@@ -70,7 +74,7 @@ def main():
         audio_file_path = extract_audio(video_path)
         rm_temp_files(video_path)
         st.write("Transcribing...")
-        text = transcribe_audio(audio_file_path)
+        text = transcribe_audio(audio_file_path, model)
         rm_temp_files(audio_file_path)
         st.write(text)
 
